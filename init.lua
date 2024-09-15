@@ -122,7 +122,6 @@ vim.opt.showmode = false
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
-
 -- Enable break indent
 vim.opt.breakindent = true
 
@@ -169,13 +168,19 @@ vim.opt.scrolloff = 10
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Remap Y to yank to the system clipboard
-vim.api.nvim_set_keymap('n', 'Y', '"+y$', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'Y', '"+y', { noremap = true, silent = true })
 
 -- Remap P to paste from the system clipboard
 vim.api.nvim_set_keymap('n', 'P', '"+p', { noremap = true, silent = true })
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+vim.keymap.set('n', 'cy', function()
+  -- Get the next motion command entered by the user
+  local motion = vim.fn.input 'Enter motion: '
+  -- Execute visual selection and yank based on the motion
+  vim.cmd('normal! v' .. motion .. 'y')
+end, { desc = 'Yank with motion' })
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -216,7 +221,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.api.nvim_create_autocmd('InsertLeave', {
   desc = 'auto-save',
   group = vim.api.nvim_create_augroup('auto-save', { clear = true }),
-  command = 'w',
+  command = 'wa',
 })
 
 vim.api.nvim_create_autocmd('BufEnter', {
@@ -241,13 +246,9 @@ vim.opt.rtp:prepend(lazypath)
 --
 --  To check the current status of your plugins, run
 --    :Lazy
---
--- Insert mode: Shift+Enter creates a new line and goes to it
--- Insert mode: Ctrl+Shift+J goes down a line without creating a new line
-vim.api.nvim_set_keymap('i', '<A-j>', '<Esc>ji', { noremap = true, silent = true })
--- Insert mode: Ctrl+Shift+K goes up a line without creating a new line
-vim.api.nvim_set_keymap('i', '<A-k>', '<Esc>ki', { noremap = true, silent = true })
 
+vim.api.nvim_set_keymap('i', '<A-j>', '<Esc>ji', { desc = 'Move To The [j] while in the Insert mode', noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<A-k>', '<Esc>ki', { desc = 'Move To The [k] while in the Insert mode', noremap = true, silent = true })
 
 --  You can press `?` in this menu for help. Use `:q` to close the window
 --
@@ -366,6 +367,7 @@ require('lazy').setup({
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'andrew-george/telescope-themes',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
 
@@ -417,15 +419,22 @@ require('lazy').setup({
         -- },
         -- pickers = {}
         extensions = {
-          ['ui-select'] = {
-            require('telescope.themes').get_dropdown(),
+          -- Load and configure the extension
+          themes = {
+            persist = {
+              -- enable persisting last theme choice
+              enabled = true,
+              -- override path to file that execute colorscheme command
+              path = vim.fn.stdpath 'config' .. '/lua/colorscheme.lua',
+            },
           },
         },
       }
 
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
-      pcall(require('telescope').load_extension, 'ui-select')
+      local telescope = require 'telescope'
+      telescope.load_extension 'themes'
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -692,7 +701,89 @@ require('lazy').setup({
       }
     end,
   },
+  {
+    'ray-x/lsp_signature.nvim',
+    event = 'VeryLazy',
+    config = function()
+      local cfg = {
+        debug = false, -- set to true to enable debug logging
+        log_path = vim.fn.stdpath 'cache' .. '/lsp_signature.log', -- log dir when debug is on
+        -- default is  ~/.cache/nvim/lsp_signature.log
+        verbose = false, -- show debug line number
 
+        bind = true, -- This is mandatory, otherwise border config won't get registered.
+        -- If you want to hook lspsaga or other signature handler, pls set to false
+        doc_lines = 10, -- will show two lines of comment/doc(if there are more than two lines in doc, will be truncated);
+        -- set to 0 if you DO NOT want any API comments be shown
+        -- This setting only take effect in insert mode, it does not affect signature help in normal
+        -- mode, 10 by default
+
+        max_height = 12, -- max height of signature floating_window
+        max_width = 80, -- max_width of signature floating_window, line will be wrapped if exceed max_width
+        -- the value need >= 40
+        wrap = true, -- allow doc/signature text wrap inside floating_window, useful if your lsp return doc/sig is too long
+        floating_window = true, -- show hint in a floating window, set to false for virtual text only mode
+
+        floating_window_above_cur_line = true, -- try to place the floating above the current line when possible Note:
+        -- will set to true when fully tested, set to false will use whichever side has more space
+        -- this setting will be helpful if you do not want the PUM and floating win overlap
+
+        floating_window_off_x = 1, -- adjust float windows x position.
+        -- can be either a number or function
+        floating_window_off_y = 0, -- adjust float windows y position. e.g -2 move window up 2 lines; 2 move down 2 lines
+        -- can be either number or function, see examples
+
+        close_timeout = 4000, -- close floating window after ms when laster parameter is entered
+        fix_pos = false, -- set to true, the floating window will not auto-close until finish all parameters
+        hint_enable = true, -- virtual hint enable
+        hint_prefix = '🐼 ', -- Panda for parameter, NOTE: for the terminal not support emoji, might crash
+        -- or, provide a table with 3 icons
+        -- hint_prefix = {
+        --     above = "↙ ",  -- when the hint is on the line above the current line
+        --     current = "← ",  -- when the hint is on the same line
+        --     below = "↖ "  -- when the hint is on the line below the current line
+        -- }
+        hint_scheme = 'String',
+        hint_inline = function()
+          return 'inline'
+        end, -- should the hint be inline(nvim 0.10 only)?  default false
+        -- return true | 'inline' to show hint inline, return 'eol' to show hint at end of line, return false to disable
+        -- return 'right_align' to display hint right aligned in the current line
+        hi_parameter = 'LspSignatureActiveParameter', -- how your parameter will be highlight
+        handler_opts = {
+          border = 'rounded', -- double, rounded, single, shadow, none, or a table of borders
+        },
+
+        always_trigger = true, -- sometime show signature on new line or in middle of parameter can be confusing, set it to false for #58
+
+        auto_close_after = nil, -- autoclose signature float win after x sec, disabled if nil.
+        extra_trigger_chars = { '{', ',', ';', '=', ':' }, -- Array of extra characters that will trigger signature completion, e.g., {"(", ","}
+        zindex = 200, -- by default it will be on top of all floating windows, set to <= 50 send it to bottom
+
+        padding = '|', -- character to pad on left and right of signature can be ' ', or '|'  etc
+
+        transparency = nil, -- disabled by default, allow floating win transparent value 1~100
+        shadow_blend = 46, -- if you using shadow as border use this set the opacity
+        shadow_guibg = 'Black', -- if you using shadow as border use this set the color e.g. 'Green' or '#121315'
+        timer_interval = 200, -- default timer check interval set to lower value if you want to reduce latency
+        toggle_key = '<C-space>', -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
+        toggle_key_flip_floatwin_setting = true, -- true: toggle floating_windows: true|false setting after toggle key pressed
+        -- false: floating_windows setup will not change, toggle_key will pop up signature helper, but signature
+        -- may not popup when typing depends on floating_window setting
+
+        select_signature_key = '<C-n>', -- cycle to next signature, e.g. '<M-n>' function overloading
+        move_cursor_key = nil, -- imap, use nvim_set_current_win to move cursor between current win and floating window
+        -- e.g. move_cursor_key = '<M-p>',
+        -- once moved to floating window, you can use <M-d>, <M-u> to move cursor up and down
+        keymaps = {}, -- relate to move_cursor_key; the keymaps inside floating window
+        -- e.g. keymaps = { 'j', '<C-o>j' } this map j to <C-o>j in floating window
+        -- <M-d> and <M-u> are default keymaps to move cursor up and down
+      }
+
+      -- recommended:
+      require('lsp_signature').setup(cfg) -- no need to specify bufnr if you don't use toggle_key
+    end,
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -735,7 +826,62 @@ require('lazy').setup({
       },
     },
   },
+  {
+    'onsails/lspkind.nvim',
+    config = function()
+      -- setup() is also available as an alias
+      require('lspkind').init {
+        -- DEPRECATED (use mode instead): enables text annotations
+        --
+        -- default: true
+        -- with_text = true,
 
+        -- defines how annotations are shown
+        -- default: symbol
+        -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
+        mode = 'symbol_text',
+
+        -- default symbol map
+        -- can be either 'default' (requires nerd-fonts font) or
+        -- 'codicons' for codicon preset (requires vscode-codicons font)
+        --
+        -- default: 'default'
+        preset = 'codicons',
+
+        -- override preset symbols
+        --
+        -- default: {}
+        symbol_map = {
+          Text = '󰉿 ',
+          Method = '󰆧 ',
+          Function = '󰘧 ',
+          Constructor = ' ',
+
+          Field = '  ',
+          Variable = '  ',
+          Class = '  ',
+          Interface = '  ',
+          Module = '  ',
+          Property = '  ',
+          Unit = '  ',
+          Value = '  ',
+          Enum = '  ',
+          Keyword = '  ',
+          Snippet = '  ',
+          Color = '  ',
+          File = '  ',
+          Reference = '  ',
+          Folder = '  ',
+          EnumMember = '  ',
+          Constant = '  ',
+          Struct = '  ',
+          Event = '  ',
+          Operator = '  ',
+          TypeParameter = '  ',
+        },
+      }
+    end,
+  },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
@@ -776,9 +922,27 @@ require('lazy').setup({
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
+      local lspkind = require 'lspkind'
       luasnip.config.setup {}
-
       cmp.setup {
+        view = {
+          entries = { name = 'custom', selection_order = 'top_down' },
+        },
+        formatting = {
+          expandable_indicator = true,
+          fields = { 'abbr', 'kind', 'menu' },
+          format = lspkind.cmp_format {
+            mode = 'symbol_text',
+            menu = {
+              buffer = '[Buffer]',
+              nvim_lsp = '[LSP]',
+              luasnip = '[LuaSnip]',
+              nvim_lua = '[Lua]',
+              latex_symbols = '[Latex]',
+            },
+          },
+        },
+
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -786,9 +950,7 @@ require('lazy').setup({
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
 
-        -- For an understanding of why these mappings were
-        -- chosen, you will need to read `:help ins-completion`
-        --
+        -- For an understanding of why these mappings were chosen, you will need to read `:help ins-completion`
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
         mapping = cmp.mapping.preset.insert {
           -- Select the [n]ext item
@@ -849,74 +1011,6 @@ require('lazy').setup({
           { name = 'path' },
         },
       }
-    end,
-  },
-
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'loctvl842/monokai-pro.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      require('monokai-pro').setup {
-        transparent_background = false,
-        terminal_colors = true,
-        devicons = true, -- highlight the icons of `nvim-web-devicons`
-        styles = {
-          comment = { italic = true },
-          keyword = { italic = true }, -- any other keyword
-          type = { italic = true }, -- (preferred) int, long, char, etc
-          storageclass = { italic = true }, -- static, register, volatile, etc
-          structure = { italic = true }, -- struct, union, enum, etc
-          parameter = { italic = true }, -- parameter pass in function
-          annotation = { italic = true },
-          tag_attribute = { italic = true }, -- attribute of tag in reactjs
-        },
-        filter = 'classic', -- classic | octagon | pro | machine | ristretto | spectrum
-        -- Enable this will disable filter option
-        day_night = {
-          enable = false, -- turn off by default
-          day_filter = 'classic', -- classic | octagon | pro | machine | ristretto | spectrum
-          night_filter = 'spectrum', -- classic | octagon | pro | machine | ristretto | spectrum
-        },
-        inc_search = 'background', -- underline | background
-        background_clear = {
-          -- "float_win",
-          'toggleterm',
-          'telescope',
-          -- "which-key",
-          'renamer',
-          'notify',
-          -- "nvim-tree",
-          -- "neo-tree",
-          -- "bufferline", -- better used if background of `neo-tree` or `nvim-tree` is cleared
-        }, -- "float_win", "toggleterm", "telescope", "which-key", "renamer", "neo-tree", "nvim-tree", "bufferline"
-        plugins = {
-          bufferline = {
-            underline_selected = false,
-            underline_visible = false,
-          },
-          indent_blankline = {
-            context_highlight = 'default', -- default | pro
-            context_start_underline = false,
-          },
-        },
-        ---@param c Colorscheme
-        override = function(c) end,
-        ---@param cs Colorscheme
-        ---@param p ColorschemeOptions
-        ---@param Config MonokaiProOptions
-        ---@param hp Helper
-      }
-    end,
-
-    init = function()
-      vim.cmd.colorscheme 'monokai-pro'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
     end,
   },
 
@@ -1004,7 +1098,9 @@ require('lazy').setup({
   require 'kickstart.plugins.auto-save',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.undo-tree',
+  require 'kickstart.plugins.codium',
 
+  require 'kickstart.plugins.themes',
   --   vim.cmd 'highlight! harpooninactive guibg=none guifg=#63698c', vim.cmd 'highlight! harpoonactive guibg=none guifg=white', vim.cmd 'highlight! harpoonnumberactive guibg=none guifg=#7aa2f7', vim.cmd 'highlight! harpoonnumberinactive guibg=none guifg=#7aa2f7', vim.cmd 'highlight! tablinefill guibg=none guifg=white',
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
@@ -1021,3 +1117,4 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+require 'colorscheme'
