@@ -999,6 +999,13 @@ require('lazy').setup({
 
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
+          -- Set up vim-dadbod for SQL filetypes
+          cmp.setup.filetype({ 'sql' }, {
+            sources = {
+              { name = 'vim-dadbod-completion' }, -- Enable vim-dadbod completion
+              { name = 'buffer' }, -- Enable buffer-based completion
+            },
+          }),
         },
         sources = {
           {
@@ -1099,7 +1106,7 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.undo-tree',
   require 'kickstart.plugins.codium',
-
+  require 'kickstart.plugins.sql',
   require 'kickstart.plugins.themes',
   --   vim.cmd 'highlight! harpooninactive guibg=none guifg=#63698c', vim.cmd 'highlight! harpoonactive guibg=none guifg=white', vim.cmd 'highlight! harpoonnumberactive guibg=none guifg=#7aa2f7', vim.cmd 'highlight! harpoonnumberinactive guibg=none guifg=#7aa2f7', vim.cmd 'highlight! tablinefill guibg=none guifg=white',
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -1118,3 +1125,4 @@ require('lazy').setup({
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 require 'colorscheme'
+vim.o.swapfile = false

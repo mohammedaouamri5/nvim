@@ -64,7 +64,4 @@ return {
     'AbdelrahmanDwedar/awesome-nvim-colorschemes',
     priority = 1000,
   },
-  {
-    
-  }
 }
