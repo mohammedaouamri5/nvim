@@ -1,1 +1,1 @@
-vim.cmd("colorscheme github_dark_colorblind")
+vim.cmd("colorscheme monokai-pro-classic")
