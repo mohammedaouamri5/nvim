@@ -118,8 +118,10 @@ vim.opt.rtp:prepend(lazypath)
 --  To check the current status of your plugins, run
 --    :Lazy
 
-vim.api.nvim_set_keymap('i', '<A-j>', '<Esc>ji', { desc = 'Move To The [j] while in the Insert mode', noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<A-k>', '<Esc>ki', { desc = 'Move To The [k] while in the Insert mode', noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<A-j>', '<Esc>ji',
+  { desc = 'Move To The [j] while in the Insert mode', noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<A-k>', '<Esc>ki',
+  { desc = 'Move To The [k] while in the Insert mode', noremap = true, silent = true })
 
 --  You can press `?` in this menu for help. Use `:q` to close the window
 --
@@ -131,19 +133,7 @@ require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
-  -- NOTE: Plugins can also be added by using a table,
-  -- with the first argument being the link and the following
-  -- keys can be used to configure plugin behavior/loading/etc.
-  --
-  -- Use `opts = {}` to force a plugin to be loaded.
-  --
-
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
-  --    require('gitsigns').setup({ ... })
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
+  {                   -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {
@@ -156,22 +146,8 @@ require('lazy').setup({
     },
   },
 
-  -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
-  --
- -- This is often very useful to both group configuration, as well as handle
-  -- lazy loading plugins that don't need to be loaded immediately at startup.
-  --
-  -- For example, in the following configuration, we use:
-  --  event = 'VimEnter'
-  --
-  -- which loads which-key before all the UI elements are loaded. Events can be
-  -- normal autocommands events (`:help autocmd-events`).
-  --
-  -- Then, because we use the `config` key, the configuration only runs
-  -- after the plugin has been loaded:
-  --  config = function() ... end
 
-  { -- Useful plugin to show you pending keybinds.
+  {                     -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
@@ -214,7 +190,7 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
+        { '<leader>c', group = '[C]ode',     mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
@@ -225,12 +201,6 @@ require('lazy').setup({
     },
   },
 
-  -- NOTE: Plugins can specify dependencies.
-  --
-  -- The dependencies are proper plugin specifications as well - anything
-  -- you do for a plugin at the top level, you can do for a dependency.
-  --
-  -- Use the `dependencies` key to specify the dependencies of a particular plugin
 
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
@@ -255,7 +225,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -358,7 +328,7 @@ require('lazy').setup({
       },
     },
   },
-  { 'Bilal2453/luvit-meta', lazy = true },
+  { 'Bilal2453/luvit-meta',     lazy = true },
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
@@ -370,41 +340,12 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim',       opts = {} },
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
-      -- Brief aside: **What is LSP?**
-      --
-      -- LSP is an initialism you've probably heard, but might not understand what it is.
-      --
-      -- LSP stands for Language Server Protocol. It's a protocol that helps editors
-      -- and language tooling communicate in a standardized fashion.
-      --
-      -- In general, you have a "server" which is some tool built to understand a particular
-      -- language (such as `gopls`, `lua_ls`, `rust_analyzer`, etc.). These Language Servers
-      -- (sometimes called LSP servers, but that's kind of like ATM Machine) are standalone
-      -- processes that communicate with some "client" - in this case, Neovim!
-      --
-      -- LSP provides Neovim with features like:
-      --  - Go to definition
-      --  - Find references
-      --  - Autocompletion
-      --  - Symbol Search
-      --  - and more!
-      --
-      -- Thus, Language Servers are external tools that must be installed separately from
-      -- Neovim. This is where `mason` and related plugins come into play.
-      --
-      -- If you're wondering about lsp vs treesitter, you can check out the wonderfully
-      -- and elegantly composed help section, `:help lsp-vs-treesitter`
-
-      --  This function gets run when an LSP attaches to a particular buffer.
-      --    That is to say, every time a new file is opened that is associated with
-      --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
-      --    function will be executed to configure the current buffer
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
@@ -496,35 +437,25 @@ require('lazy').setup({
         end,
       })
 
-      -- LSP servers and clients are able to communicate to each other what features they support.
-      --  By default, Neovim doesn't support everything that is in the LSP specification.
-      --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
-      --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-      -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --
-      --  Add any additional override configuration in the following tables. Available keys are:
-      --  - cmd (table): Override the default command used to start the server
-      --  - filetypes (table): Override the default list of associated filetypes for the server
-      --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-      --  - settings (table): Override the default settings passed when initializing the server.
-      --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         clangd = {},
         gopls = {},
-        pyright = {},
+        pyright = {
+          settings = {
+            python = {
+              analysis = {
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = 'openFilesOnly',
+                typeCheckingMode = 'off',
+              },
+            },
+          },
+        },
         rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
-        --
 
         lua_ls = {
           -- cmd = {...},
@@ -577,23 +508,23 @@ require('lazy').setup({
     event = 'VeryLazy',
     config = function()
       local cfg = {
-        debug = false, -- set to true to enable debug logging
+        debug = false,                                             -- set to true to enable debug logging
         log_path = vim.fn.stdpath 'cache' .. '/lsp_signature.log', -- log dir when debug is on
         -- default is  ~/.cache/nvim/lsp_signature.log
-        verbose = false, -- show debug line number
+        verbose = false,                                           -- show debug line number
 
-        bind = true, -- This is mandatory, otherwise border config won't get registered.
+        bind = true,                                               -- This is mandatory, otherwise border config won't get registered.
         -- If you want to hook lspsaga or other signature handler, pls set to false
-        doc_lines = 10, -- will show two lines of comment/doc(if there are more than two lines in doc, will be truncated);
+        doc_lines = 10,                                            -- will show two lines of comment/doc(if there are more than two lines in doc, will be truncated);
         -- set to 0 if you DO NOT want any API comments be shown
         -- This setting only take effect in insert mode, it does not affect signature help in normal
         -- mode, 10 by default
 
-        max_height = 12, -- max height of signature floating_window
-        max_width = 80, -- max_width of signature floating_window, line will be wrapped if exceed max_width
+        max_height = 12,                       -- max height of signature floating_window
+        max_width = 80,                        -- max_width of signature floating_window, line will be wrapped if exceed max_width
         -- the value need >= 40
-        wrap = true, -- allow doc/signature text wrap inside floating_window, useful if your lsp return doc/sig is too long
-        floating_window = true, -- show hint in a floating window, set to false for virtual text only mode
+        wrap = true,                           -- allow doc/signature text wrap inside floating_window, useful if your lsp return doc/sig is too long
+        floating_window = true,                -- show hint in a floating window, set to false for virtual text only mode
 
         floating_window_above_cur_line = true, -- try to place the floating above the current line when possible Note:
         -- will set to true when fully tested, set to false will use whichever side has more space
@@ -605,9 +536,9 @@ require('lazy').setup({
         -- can be either number or function, see examples
 
         close_timeout = 4000, -- close floating window after ms when laster parameter is entered
-        fix_pos = false, -- set to true, the floating window will not auto-close until finish all parameters
-        hint_enable = false, -- virtual hint enable
-        hint_prefix = '', -- Panda for parameter, NOTE: for the terminal not support emoji, might crash
+        fix_pos = false,      -- set to true, the floating window will not auto-close until finish all parameters
+        hint_enable = false,  -- virtual hint enable
+        hint_prefix = '',     -- Panda for parameter, NOTE: for the terminal not support emoji, might crash
         -- or, provide a table with 3 icons
         --hint_prefix = {
         --  above = '↙ ', -- when the hint is on the line above the current line
@@ -620,28 +551,28 @@ require('lazy').setup({
         -- return 'right_align' to display hint right aligned in the current line
         hi_parameter = 'LspSignatureActiveParameter', -- how your parameter will be highlight
         handler_opts = {
-          border = 'rounded', -- double, rounded, single, shadow, none, or a table of borders
+          border = 'rounded',                         -- double, rounded, single, shadow, none, or a table of borders
         },
 
-        always_trigger = true, -- sometime show signature on new line or in middle of parameter can be confusing, set it to false for #58
+        always_trigger = true,                             -- sometime show signature on new line or in middle of parameter can be confusing, set it to false for #58
 
-        auto_close_after = nil, -- autoclose signature float win after x sec, disabled if nil.
+        auto_close_after = nil,                            -- autoclose signature float win after x sec, disabled if nil.
         extra_trigger_chars = { '{', ',', ';', '=', ':' }, -- Array of extra characters that will trigger signature completion, e.g., {"(", ","}
-        zindex = 200, -- by default it will be on top of all floating windows, set to <= 50 send it to bottom
+        zindex = 200,                                      -- by default it will be on top of all floating windows, set to <= 50 send it to bottom
 
-        padding = ' ', -- character to pad on left and right of signature can be ' ', or '|'  etc
+        padding = ' ',                                     -- character to pad on left and right of signature can be ' ', or '|'  etc
 
-        transparency = nil, -- disabled by default, allow floating win transparent value 1~100
-        shadow_blend = 46, -- if you using shadow as border use this set the opacity
-        shadow_guibg = 'Black', -- if you using shadow as border use this set the color e.g. 'Green' or '#121315'
-        timer_interval = 200, -- default timer check interval set to lower value if you want to reduce latency
-        toggle_key = '<C-space>', -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
-        toggle_key_flip_floatwin_setting = true, -- true: toggle floating_windows: true|false setting after toggle key pressed
+        transparency = nil,                                -- disabled by default, allow floating win transparent value 1~100
+        shadow_blend = 46,                                 -- if you using shadow as border use this set the opacity
+        shadow_guibg = 'Black',                            -- if you using shadow as border use this set the color e.g. 'Green' or '#121315'
+        timer_interval = 200,                              -- default timer check interval set to lower value if you want to reduce latency
+        toggle_key = '<C-space>',                          -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
+        toggle_key_flip_floatwin_setting = true,           -- true: toggle floating_windows: true|false setting after toggle key pressed
         -- false: floating_windows setup will not change, toggle_key will pop up signature helper, but signature
         -- may not popup when typing depends on floating_window setting
 
         select_signature_key = '<C-n>', -- cycle to next signature, e.g. '<M-n>' function overloading
-        move_cursor_key = nil, -- imap, use nvim_set_current_win to move cursor between current win and floating window
+        move_cursor_key = nil,          -- imap, use nvim_set_current_win to move cursor between current win and floating window
         -- e.g. move_cursor_key = '<M-p>',
         -- once moved to floating window, you can use <M-d>, <M-u> to move cursor up and down
         keymaps = {}, -- relate to move_cursor_key; the keymaps inside floating window
@@ -872,7 +803,7 @@ require('lazy').setup({
           cmp.setup.filetype({ 'sql' }, {
             sources = {
               { name = 'vim-dadbod-completion' }, -- Enable vim-dadbod completion
-              { name = 'buffer' }, -- Enable buffer-based completion
+              { name = 'buffer' },                -- Enable buffer-based completion
             },
           }),
         },
@@ -978,6 +909,8 @@ require('lazy').setup({
   require 'kickstart.plugins.sql',
   require 'kickstart.plugins.themes',
   require 'kickstart.plugins.rest-cleint',
+  require 'kickstart.plugins.python.Isort',
+  require 'kickstart.plugins.python.black',
   --   vim.cmd 'highlight! harpooninactive guibg=none guifg=#63698c', vim.cmd 'highlight! harpoonactive guibg=none guifg=white', vim.cmd 'highlight! harpoonnumberactive guibg=none guifg=#7aa2f7', vim.cmd 'highlight! harpoonnumberinactive guibg=none guifg=#7aa2f7', vim.cmd 'highlight! tablinefill guibg=none guifg=white',
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
@@ -992,27 +925,15 @@ require('lazy').setup({
   },
 })
 
-
-
-
-
-
+vim.keymap.set({ 'n', 'v' }, '<leader>i', function()
+  vim.lsp.buf.format {
+    async = false,
+    timeout_ms = 5000,
+  }
+end, { desc = 'Format Document' })
 
 vim.keymap.set('n', '<C-M-CR>', '<cmd>:Rest run<CR>')
 vim.keymap.set('n', '<C-M-BS>', '<cmd>:q<CR>')
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
