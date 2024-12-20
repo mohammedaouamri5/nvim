@@ -1,12 +1,17 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+
 vim.cmd 'set expandtab'
 vim.cmd 'set tabstop=4'
 vim.cmd 'set softtabstop=4'
 vim.cmd 'set shiftwidth=4'
 
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
+--
+
+
 vim.g.have_nerd_font = true
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -929,6 +934,12 @@ end, { desc = 'Format Document' })
 
 vim.keymap.set('n', '<C-M-CR>', '<cmd>:Rest run<CR>')
 vim.keymap.set('n', '<C-M-BS>', '<cmd>:q<CR>')
+
+
+
+
+require "kickstart.plugins.switch_chpp"
+
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
