@@ -123,9 +123,14 @@ vim.opt.rtp:prepend(lazypath)
 --  To check the current status of your plugins, run
 --    :Lazy
 
-vim.api.nvim_set_keymap('i', '<A-j>', '<Esc>ji',
+vim.api.nvim_set_keymap('i', '<A-C-j>', '',
   { desc = 'Move To The [j] while in the Insert mode', noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<A-k>', '<Esc>ki',
+vim.api.nvim_set_keymap('i', '<A-C-k>', '',
+  { desc = 'Move To The [k] while in the Insert mode', noremap = true, silent = true })
+
+vim.api.nvim_set_keymap('n', '<A-C-j>', '',
+  { desc = 'Move To The [j] while in the Insert mode', noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<A-C-k>', '',
   { desc = 'Move To The [k] while in the Insert mode', noremap = true, silent = true })
 
 --  You can press `?` in this menu for help. Use `:q` to close the window
@@ -945,3 +950,12 @@ require "kickstart.plugins.switch_chpp"
 -- vim: ts=2 sts=2 sw=2 et
 require 'colorscheme'
 vim.o.swapfile = false
+
+
+
+vim.api.nvim_del_keymap('i', '<A-C-j>')
+vim.api.nvim_del_keymap('i', '<A-C-k>')
+
+-- Unmap <A-C-j> and <A-C-k> in Normal mode
+vim.api.nvim_del_keymap('n', '<A-C-j>')
+vim.api.nvim_del_keymap('n', '<A-C-k>')
