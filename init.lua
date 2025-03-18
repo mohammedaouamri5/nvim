@@ -624,7 +624,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -914,8 +914,6 @@ require('lazy').setup({
   require 'kickstart.plugins.sql',
   require 'kickstart.plugins.themes',
   require 'kickstart.plugins.rest-cleint',
-  require 'kickstart.plugins.python.Isort',
-  require 'kickstart.plugins.python.black',
   --   vim.cmd 'highlight! harpooninactive guibg=none guifg=#63698c', vim.cmd 'highlight! harpoonactive guibg=none guifg=white', vim.cmd 'highlight! harpoonnumberactive guibg=none guifg=#7aa2f7', vim.cmd 'highlight! harpoonnumberinactive guibg=none guifg=#7aa2f7', vim.cmd 'highlight! tablinefill guibg=none guifg=white',
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
