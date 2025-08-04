@@ -804,3 +804,5 @@ vim.api.nvim_del_keymap('i', '<A-C-k>')
 -- Unmap <A-C-j> and <A-C-k> in Normal mode
 vim.api.nvim_del_keymap('n', '<A-C-j>')
 vim.api.nvim_del_keymap('n', '<A-C-k>')
+
+vim.keymap.set("v", "p", '"_dP', { noremap = true, silent = true })
