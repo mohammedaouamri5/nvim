@@ -8,6 +8,7 @@ vim.cmd 'set softtabstop=4'
 vim.cmd 'set shiftwidth=4'
 
 
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 --
 
@@ -20,6 +21,9 @@ vim.opt.showmode = false
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
+
+
+vim.opt.clipboard = "unnamedplus"
 vim.opt.breakindent = true
 vim.opt.undofile = true
 vim.opt.ignorecase = true
@@ -44,10 +48,6 @@ vim.opt.scrolloff = 10
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Remap Y to yank to the system clipboard
-vim.api.nvim_set_keymap('n', 'Y', '"+y', { noremap = true, silent = true })
-
--- Remap P to paste from the system clipboard
-vim.api.nvim_set_keymap('n', 'P', '"+p', { noremap = true, silent = true })
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -637,8 +637,6 @@ require('lazy').setup({
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
           ['<CR>'] = cmp.mapping.confirm { select = true },
-          ['<Tab>'] = cmp.mapping.select_next_item(),
-          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -805,4 +803,10 @@ vim.api.nvim_del_keymap('i', '<A-C-k>')
 vim.api.nvim_del_keymap('n', '<A-C-j>')
 vim.api.nvim_del_keymap('n', '<A-C-k>')
 
+
+
+
+vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v' }, '<leader>p', '"+p', { noremap = true, silent = true })
+vim.keymap.del("i", "<Tab>")
 vim.keymap.set("v", "p", '"_dP', { noremap = true, silent = true })

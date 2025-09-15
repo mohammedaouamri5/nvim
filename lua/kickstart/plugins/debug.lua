@@ -87,6 +87,7 @@ return {
           disconnect = '⏏',
         },
       },
+      
     }
 
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
