@@ -1,17 +1,13 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-
 vim.cmd 'set expandtab'
 vim.cmd 'set tabstop=4'
 vim.cmd 'set softtabstop=4'
 vim.cmd 'set shiftwidth=4'
 
-
-
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 --
-
 
 vim.g.have_nerd_font = true
 vim.opt.number = true
@@ -22,8 +18,7 @@ vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
 
-
-vim.opt.clipboard = "unnamedplus"
+vim.opt.clipboard = 'unnamedplus'
 vim.opt.breakindent = true
 vim.opt.undofile = true
 vim.opt.ignorecase = true
@@ -123,15 +118,11 @@ vim.opt.rtp:prepend(lazypath)
 --  To check the current status of your plugins, run
 --    :Lazy
 
-vim.api.nvim_set_keymap('i', '<A-C-j>', '',
-  { desc = 'Move To The [j] while in the Insert mode', noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<A-C-k>', '',
-  { desc = 'Move To The [k] while in the Insert mode', noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<A-C-j>', '', { desc = 'Move To The [j] while in the Insert mode', noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<A-C-k>', '', { desc = 'Move To The [k] while in the Insert mode', noremap = true, silent = true })
 
-vim.api.nvim_set_keymap('n', '<A-C-j>', '',
-  { desc = 'Move To The [j] while in the Insert mode', noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<A-C-k>', '',
-  { desc = 'Move To The [k] while in the Insert mode', noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<A-C-j>', '', { desc = 'Move To The [j] while in the Insert mode', noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<A-C-k>', '', { desc = 'Move To The [k] while in the Insert mode', noremap = true, silent = true })
 
 --  You can press `?` in this menu for help. Use `:q` to close the window
 --
@@ -139,11 +130,18 @@ vim.api.nvim_set_keymap('n', '<A-C-k>', '',
 --    :Lazy update
 --
 -- NOTE: Here is where you install your plugins.
-require('lazy').setup({
+require('lazy').setup {
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
-  {                   -- Adds git related signs to the gutter, as well as utilities for managing changes
+  {
+    'j-hui/fidget.nvim',
+    opts = {},
+  },
+  {
+    'nvim-neotest/nvim-nio',
+  },
+  { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {
@@ -178,7 +176,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -293,7 +291,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
@@ -438,6 +436,7 @@ require('lazy').setup({
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        'arduino_language_server',
         'stylua', -- Used to format Lua code
         'ts_ls',
       })
@@ -486,10 +485,10 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { "isort", "black" },
+        python = { 'isort', 'black' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -569,12 +568,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
@@ -668,7 +667,7 @@ require('lazy').setup({
           cmp.setup.filetype({ 'sql' }, {
             sources = {
               { name = 'vim-dadbod-completion' }, -- Enable vim-dadbod completion
-              { name = 'buffer' },                -- Enable buffer-based completion
+              { name = 'buffer' }, -- Enable buffer-based completion
             },
           }),
         },
@@ -691,8 +690,8 @@ require('lazy').setup({
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = {
-      signs = false
-    }
+      signs = false,
+    },
   },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -770,8 +769,9 @@ require('lazy').setup({
   require 'kickstart.plugins.codium',
   require 'kickstart.plugins.sql',
   require 'kickstart.plugins.themes',
-  require 'kickstart.plugins.rest-cleint',
-})
+ --  require 'kickstart.plugins.arduino-nvim',
+}
+
 
 vim.keymap.set({ 'n', 'v' }, '<leader>i', function()
   vim.lsp.buf.format {
@@ -783,18 +783,12 @@ end, { desc = 'Format Document' })
 vim.keymap.set('n', '<C-M-CR>', '<cmd>:Rest run<CR>')
 vim.keymap.set('n', '<C-M-BS>', '<cmd>:q<CR>')
 
-
-
-
-require "kickstart.plugins.switch_chpp"
-
+require 'kickstart.plugins.switch_chpp'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 require 'colorscheme'
 vim.o.swapfile = false
-
-
 
 vim.api.nvim_del_keymap('i', '<A-C-j>')
 vim.api.nvim_del_keymap('i', '<A-C-k>')
@@ -803,10 +797,7 @@ vim.api.nvim_del_keymap('i', '<A-C-k>')
 vim.api.nvim_del_keymap('n', '<A-C-j>')
 vim.api.nvim_del_keymap('n', '<A-C-k>')
 
-
-
-
 vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { noremap = true, silent = true })
 vim.keymap.set({ 'n', 'v' }, '<leader>p', '"+p', { noremap = true, silent = true })
-vim.keymap.del("i", "<Tab>")
-vim.keymap.set("v", "p", '"_dP', { noremap = true, silent = true })
+vim.keymap.del('i', '<Tab>')
+vim.keymap.set('v', 'p', '"_dP', { noremap = true, silent = true })
