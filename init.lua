@@ -736,7 +736,7 @@ require('lazy').setup {
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -769,9 +769,12 @@ require('lazy').setup {
   require 'kickstart.plugins.codium',
   require 'kickstart.plugins.sql',
   require 'kickstart.plugins.themes',
+  require 'kickstart.plugins.render-markdown',
  --  require 'kickstart.plugins.arduino-nvim',
 }
-
+vim.keymap.set('n', '<leader>tc', function()
+  require('markdown-togglecheck').toggle()
+end, { desc = "Toggle Markdown Checkbox" })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>i', function()
   vim.lsp.buf.format {
@@ -801,3 +804,8 @@ vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { noremap = true, silent = true
 vim.keymap.set({ 'n', 'v' }, '<leader>p', '"+p', { noremap = true, silent = true })
 vim.keymap.del('i', '<Tab>')
 vim.keymap.set('v', 'p', '"_dP', { noremap = true, silent = true })
+
+vim.opt.expandtab = true
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
