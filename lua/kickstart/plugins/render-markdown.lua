@@ -1,27 +1,39 @@
-return {
-    'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
-    opts = {
-        -- Change 'code' to 'go' so the plugin actually attaches to your buffer
-        enabled_filetypes = { 'markdown', 'go' },
-        -- This ensures the plugin renders even while you're typing or in different modes
-        render_modes = true,
-        anti_conceal = {
-            enabled = true, -- Stops the icons from disappearing when your cursor is on the line
-        },
+-- lua/kickstart/plugins/render-markdown.lua
 
-        checkbox = {
-            enabled = true,
-            unchecked = { icon = '󰄱 ' },
-            checked = { icon = '󰄵 ' },
-            -- Custom color for the checked box to make it pop
-            custom = {
-                todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo' },
-            },
-        },
-        -- This is the crucial bit for code comments
-        injection = {
-            enabled = true,
-        },
+local gh = function(repo) return 'https://github.com/' .. repo end
+
+-- 1. Add the plugin and its dependencies
+-- Note: Your init.lua likely already adds treesitter and devicons,
+-- but adding them here ensures they are in the runtime path.
+vim.pack.add {
+  gh 'nvim-treesitter/nvim-treesitter',
+  gh 'nvim-tree/nvim-web-devicons',
+  gh 'MeanderingProgrammer/render-markdown.nvim',
+}
+
+-- 2. Configure the plugin
+require('render-markdown').setup {
+  -- Enabled for go files to support markdown in code comments
+  enabled_filetypes = { 'markdown', 'go' },
+
+  -- Ensures rendering persists across different modes
+  render_modes = true,
+
+  anti_conceal = {
+    enabled = true, -- Stops icons from disappearing when cursor is on the line
+  },
+
+  checkbox = {
+    enabled = true,
+    unchecked = { icon = '󰄱 ' },
+    checked = { icon = '󰄵 ' },
+    custom = {
+      todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo' },
     },
+  },
+
+  -- Crucial for rendering markdown inside code comments
+  injection = {
+    enabled = true,
+  },
 }
