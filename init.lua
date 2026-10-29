@@ -513,21 +513,35 @@ do
 
   require('mason').setup {}
 
+  -- These servers are provided by system packages (pacman) rather than Mason:
+  --   pyright -> 'pyright'                  (usr/bin/pyright-langserver)
+  --   ts_ls   -> 'typescript-language-server' (usr/bin/typescript-language-server)
+  -- Mason installs both through npm, which is not available on this machine,
+  -- so keep them out of Mason's install list and enable them directly below.
+  local system_servers = { 'pyright', 'ts_ls' }
+
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
     'arduino_language_server',
     'ts_ls',
   })
+  ensure_installed = vim.tbl_filter(function(name)
+    return not vim.tbl_contains(system_servers, name)
+  end, ensure_installed)
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+  -- NOTE: this version of mason-lspconfig no longer supports the `handlers`
+  -- option; installed servers are enabled automatically. System-provided
+  -- servers are not in Mason's registry, so they must be excluded here and
+  -- enabled explicitly (with their settings applied) further down.
   require('mason-lspconfig').setup {
-    handlers = {
-      function(server_name)
-        local server = servers[server_name] or {}
-        require('lspconfig')[server_name].setup(server)
-      end,
-    },
+    automatic_enable = { exclude = system_servers },
   }
+
+  for _, name in ipairs(system_servers) do
+    vim.lsp.config(name, servers[name] or {})
+  end
+  vim.lsp.enable(system_servers)
 end
 
 -- ============================================================
